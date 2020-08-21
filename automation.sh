@@ -217,7 +217,7 @@ virtualHostDelete(){
       echo -e  "${GREEN}[+]Removed name from hosts file${NC}"
 
 
-    echo "[+] $name is deleted" 
+    echo "${GREEN}[+] $name is deleted${NC}" 
     sitesEnable='/etc/apache2/sites-enabled/'
     sitesAvailable='/etc/apache2/sites-available/'
     sitesAvailabledomain=$sitesAvailable$name.conf
@@ -254,9 +254,14 @@ installServerSetup(){
     sudo systemctl enable mysql
     sudo service apache2 restart
     sudo service mysql restart
+    echo -n -e "${GREEN}[+] Done. Your Good to go.${NC}"
+    echo -n -e "${GREEN}[+] Click enter to continue${NC}"
+    read
+
+
 
 }
-phpmyadmin(){
+phpmyadmin(){ 
     echo "[*] Please navigate using cd command where you want to install phpmysql"
     echo "[*] copy following command and pest in your console to install it mannally"
     echo "[*] Composer update"
@@ -301,7 +306,7 @@ echo  -e "${YELLOW}[+] Sit back and relax :) ......${NC}"
 # CREATE PROJECT DIRECTORIES
 mkdir -p "$PROJECT_SOURCE_URL"
 cd "$PROJECT_SOURCE_URL"
-echo "Creating $PROJECT_FOLDER_NAME"
+echo "${YELLOW}[+] Creating $PROJECT_FOLDER_NAME${NC}"
 mkdir -p "$PROJECT_FOLDER_NAME"
 cd "$PROJECT_FOLDER_NAME"
 
