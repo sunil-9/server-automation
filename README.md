@@ -4,6 +4,7 @@ This script help for the automation of server configuration mainly if you want t
 **download the code using git command**
 ```
 git clone https://github.com/kismatboy/server-automation.git 
+cd server-automation
 chmod +x automation.sh
  bash automation.sh
 ```
