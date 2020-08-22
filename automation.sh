@@ -265,18 +265,21 @@ installServerSetup(){
 phpmyadmin(){ 
     echo "[?] Enter Domain name: "
     read domain
-    path =/var/www/$domain/public_html
-    rm -rf "$path/phpmyadmin" || true
+    # mkdir -p "/var/www/$domain/public_html"
+    path=/var/www/$domain/public_html
+
+    rm -rf "${path}/phpmyadmin" || true
     cd "$path"
+    pwd
     echo -e "${YELLOW}[*] Installing Phpmyadmin on $domain please wait it will take a while."
     echo -e "${YELLOW}[*] Installing Composer${NC}"
    apt-get install composer -y > /dev/null;
     echo -e "${YELLOW}[*] creating project to install phpmyadmin${NC}"
-	composer create-project phpmyadmin/phpmyadmin > /dev/null;
+  composer create-project phpmyadmin/phpmyadmin > /dev/null;
     echo -e "${YELLOW}[*] Installing Phpmyadmin${NC}"
-	composer create-project phpmyadmin/phpmyadmin --repository-url=https://www.phpmyadmin.net/packages.json --no-dev > /dev/null
+  composer create-project phpmyadmin/phpmyadmin --repository-url=https://www.phpmyadmin.net/packages.json --no-dev > /dev/null
     echo  -e "${GREEN}[+] Done Click enter to continue${NC}"
-	read
+  read
 }
 updateSystem(){
     echo -e "${YELLOW}[+] Updating system.${NC}"
