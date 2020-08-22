@@ -118,10 +118,7 @@ createSwap() {
         echo -e "${RED}[-] The fstab does not contain a swap entry. Adding an entry.${NC}"
         echo "/swapfile swap swap defaults 0 0" >> /etc/fstab    
     fi
-
-    echo ""
     echo -e "${GREEN}[+] Done Press any Enter to go to home page.${NC}"
-    echo ""
     read
 }
 
@@ -151,37 +148,38 @@ function setupSwapMain() {
     echo -e "[*] Please Know what you are doing first.${NC}"
     echo ""
 
-    echo -n "Do you want to proceed? (Y/N): "; read proceed
+    echo  "[?]Do you want to proceed? (Y/N): "; read proceed
     if [ "$proceed" == "y" ]; then
         echo "[+] setting up new swap memory"
         setupSwap
     else
-
-        echo "Oke. Bye!"
-
+    echo  -e "${GREEN}[+] Done Click enter to continue${NC}"
     fi
 }
 ########### virtual host ######
 virtualHost(){
   default_domain="example.com"
-  read -p "[+] Enter domain name default name [$default_domain]" name
+  read -p "[?] Enter domain name default name [$default_domain]" name
   name="${name:-$default_domain}"
-  echo $name
   DEFAULT_WEB_ROOT_DIR="/var/www/$name/public_html/"
-  read -p "[+] Enter web root default  WEB_ROOT_DIR [$DEFAULT_WEB_ROOT_DIR]: " WEB_ROOT_DIR
+  read -p "[?] Enter web root default  WEB_ROOT_DIR [$DEFAULT_WEB_ROOT_DIR]: " WEB_ROOT_DIR
     WEB_ROOT_DIR="${WEB_ROOT_DIR:-$DEFAULT_WEB_ROOT_DIR}"
-    echo $WEB_ROOT_DIR
-
+ DEFAULT_EMAIL="admin@$name"
+  read -p "[?] Enter web root default  email [$DEFAULT_EMAIL]: " email
+    email="${WEB_ROOT_DIR:-$DEFAULT_EMAIL}"
      
     email=${3-'webmaster@localhost'}
     sitesEnable='/etc/apache2/sites-enabled/'
     sitesAvailable='/etc/apache2/sites-available/'
     sitesAvailabledomain=$sitesAvailable$name.conf
-    echo "[+] Creating a vhost for $sitesAvailabledomain with a webroot $WEB_ROOT_DIR"
-    mkdir -p "$WEB_ROOT_DIR"
+    echo -e "${YELLOW}[+] Creating a vhost for $sitesAvailabledomain with a webroot $WEB_ROOT_DIR${NC}"
+    echo -e "${YELLOW}[+]backing up the webroot dir if exits${NC}" 
+    zip backup.zip * > /dev/null
+    echo -e "${YELLOW}[+]Creating clean the webroot dir${NC}" 
+    rm -rf "$WEB_ROOT_DIR" || true
+    mkdir -p "$WEB_ROOT_DIR" > /dev/null
+    echo -e "${YELLOW}[+]Provide permissions for apache2 web server${NC}" 
     sudo chown www-data:www-data -R "$WEB_ROOT_DIR"
-
-
     echo "
         <VirtualHost *:80>
           ServerAdmin $email
@@ -192,12 +190,14 @@ virtualHost(){
             AllowOverride all
           </Directory>
         </VirtualHost>" > $sitesAvailabledomain
-    echo -e $"\nNew Virtual Host Created\n"
+    echo -e "${YELLOW}[+]New Virtual Host Created${NC}"
 
     sed -i "1s/^/127.0.0.1 $name\n/" /etc/hosts
+    echo -e "${YELLOW}[+]Enabling webiste host file${NC}" 
+    a2ensite $name > /dev/null
+    echo -e "${YELLOW}[+]Reloading apache2 server configuration file${NC}" 
 
-    a2ensite $name
-    service apache2 reload
+    service apache2 reload > /dev/null
 
     echo -e "${GREEN}[+] Done, please browse to http://$name to check! Click enter to go to main menu.${NC}"
     read
@@ -217,86 +217,107 @@ virtualHostDelete(){
       echo -e  "${GREEN}[+]Removed name from hosts file${NC}"
 
 
-    echo "${GREEN}[+] $name is deleted${NC}" 
+    echo -e "${GREEN}[+] $name is deleted${NC}" 
     sitesEnable='/etc/apache2/sites-enabled/'
     sitesAvailable='/etc/apache2/sites-available/'
     sitesAvailabledomain=$sitesAvailable$name.conf
     echo -e "${YELLOW}[+] Deleting a vhost for $sitesAvailabledomain with a webroot $WEB_ROOT_DIR${NC}"
 
    rm -f $sitesAvailabledomain
-    echo -e $"\n Virtual Host Deleted\n"
-    a2dissite $name
-    service apache2 reload
+    echo -e "${GREEN}[+] Virtual Host Deleted${NC}"
+    echo -e "${YELLOW}[+] Removing settings${NC}"
+    a2dissite $name > /dev/null
+    service apache2 reload > /dev/null
 
-    echo -e "${GREEN}[+] Done, please browse to http://$name to check! Click enter to go to main menu.${NC}"
+    echo  -e "${GREEN}[+] Done Click enter to continue${NC}"
     read
 
 }
 installServerSetup(){
-    echo -n -e "${YELLOW}[+] updating System first${NC}"
-    sudo apt-get update -y && sudo apt-get upgrade -y
-    echo -n -e "${YELLOW}[+] Installing apache2 server and its tools${NC}"
-    sudo apt-get install apache2 apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert -y
-    echo -n -e "${YELLOW}[+] Installing php and its tools${NC}"
-    sudo apt-get install php libapache2-mod-php -y
-    echo -n -e "${YELLOW}[+] Installing Mysql Database${NC}"
-    sudo apt-get install mysql-server mysql-client -y
-    echo -n -e "${YELLOW}[+] Installing Phpmyadmin${NC}"
-    sudo apt-get install phpmyadmin -y
-    echo -n -e "${YELLOW}[+] Changing permissions${NC}"
+    echo -e "${RED}[*] Choose apache in the server list while installing phpmyadmin${NC}"
+    echo -e "${YELLOW}[+] updating System first${NC}"
+    sudo apt-get update -y > /dev/null && sudo apt-get upgrade -y > /dev/null
+    echo -e "${YELLOW}[+] Installing apache2 server and its tools${NC}"
+    sudo apt-get install apache2 apache2-doc apache2-utils libexpat1 ssl-cert -y > /dev/null
+    echo -e "${YELLOW}[+] Installing php and its tools${NC}"
+    sudo apt-get install php libapache2-mod-php -y > /dev/null
+    echo -e "${YELLOW}[+] Installing Mysql Database${NC}"
+    sudo apt-get install mysql-server mysql-client -y > /dev/null
+    echo -e "${YELLOW}[+] Installing Phpmyadmin${NC}"
+    sudo apt-get install phpmyadmin -y 
+    echo -e "${YELLOW}[+] Changing permissions${NC}"
     sudo chown -R www-data:www-data /var/www
+    echo -e "${YELLOW}[+] enable and restarting services${NC}"
     echo ""
-    echo -n -e "${YELLOW}[+] enable and restarting services${NC}"
-    sudo service apache2 restart
-    sudo service mysql restart
-    sudo a2enmod rewrite
-    sudo systemctl enable apache2
-    sudo systemctl enable mysql
-    sudo service apache2 restart
-    sudo service mysql restart
-    echo -n -e "${GREEN}[+] Done. Your Good to go.${NC}"
-    echo -n -e "${GREEN}[+] Click enter to continue${NC}"
+    sudo service apache2 restart > /dev/null
+    sudo service mysql restart > /dev/null
+    sudo a2enmod rewrite > /dev/null
+    sudo systemctl enable apache2 > /dev/null
+    sudo systemctl enable mysql > /dev/null
+    sudo systemctl restart apache2 > /dev/null
+    sudo systemctl restart mysql > /dev/null
+    echo  -e "${GREEN}[+] Done Click enter to continue${NC}"
     read
 
 
 
 }
 phpmyadmin(){ 
-    echo "[*] Please navigate using cd command where you want to install phpmysql"
-    echo "[*] copy following command and pest in your console to install it mannally"
-    echo "[*] Composer update"
-    echo " -->  composer create-project phpmyadmin/phpmyadmin"
-    echo " -->  composer create-project phpmyadmin/phpmyadmin --repository-url=https://www.phpmyadmin.net/packages.json --no-dev"
-    read
+    echo "[?] Enter Domain name: "
+    read domain
+    path =/var/www/$domain/public_html
+    rm -rf "$path/phpmyadmin" || true
+    cd "$path"
+    echo -e "${YELLOW}[*] Installing Phpmyadmin on $domain please wait it will take a while."
+    echo -e "${YELLOW}[*] Installing Composer${NC}"
+   apt-get install composer -y > /dev/null;
+    echo -e "${YELLOW}[*] creating project to install phpmyadmin${NC}"
+	composer create-project phpmyadmin/phpmyadmin > /dev/null;
+    echo -e "${YELLOW}[*] Installing Phpmyadmin${NC}"
+	composer create-project phpmyadmin/phpmyadmin --repository-url=https://www.phpmyadmin.net/packages.json --no-dev > /dev/null
+    echo  -e "${GREEN}[+] Done Click enter to continue${NC}"
+	read
 }
 updateSystem(){
     echo -e "${YELLOW}[+] Updating system.${NC}"
     apt-get update && apt-get upgrade -y
 }
 fullAutomatedWP(){
+
+    default_domain="example.com"
+    read -p "[+] Enter domain name default name [$default_domain]: " name
+    name="${name:-$default_domain}"
+     DEFAULT_WEB_ROOT_DIR="/var/www/$name/public_html/"
+  read -p "[+] Enter web root default  WEB_ROOT_DIR [$DEFAULT_WEB_ROOT_DIR]: " WEB_ROOT_DIR
+    WEB_ROOT_DIR="${WEB_ROOT_DIR:-$DEFAULT_WEB_ROOT_DIR}"
+    echo -e "${YELLOW}[+] Deleting web root dir $WEB_ROOT_DIR${NC}"
+    rm -r "$WEB_ROOT_DIR"
+    echo -e "${YELLOW}[+] Creating web root dir $WEB_ROOT_DIR${NC}"
+    mkdir -p "$WEB_ROOT_DIR"
+# read PROJECT_SOURCE_URL
+
+    # echo $PROJECT_SOURCE_URL;read;
 # Downloading wordpress
 echo  -e "${YELLOW}[+] Downloading wordpress${NC}"
 WORDPRESS_URL="https://wordpress.org/latest.tar.gz"
 
-echo "[+] Project Location (eg. /home/users/name/desktop/)?"
-read PROJECT_SOURCE_URL
-
 # GET ALL USER INPUT
-echo "[+] Project folder name?(if any)"
+echo "[?] Project folder name?(if any)"
 read PROJECT_FOLDER_NAME
 
-echo "[+] Setup wp_config? (y/n)"
+echo "[?] Setup wp_config? (y/n)"
 read SHOULD_SETUP_DB
 
 if [ $SHOULD_SETUP_DB = 'y' ]
 then
-  echo "DB Name"
+  echo "[?] Enter DB Name"
   read DB_NAME
 
-  echo "DB Username"
+  echo "[?] Enter DB Username"
   read DB_USERNAME
 
-  echo "DB Password"
+
+  echo "[?] Enter DB Password"
   read DB_PASSWORD
 fi
 
@@ -305,8 +326,8 @@ echo  -e "${YELLOW}[+] Sit back and relax :) ......${NC}"
 
 # CREATE PROJECT DIRECTORIES
 mkdir -p "$PROJECT_SOURCE_URL"
-cd "$PROJECT_SOURCE_URL"
-echo "${YELLOW}[+] Creating $PROJECT_FOLDER_NAME${NC}"
+cd "$WEB_ROOT_DIR"
+echo "${YELLOW}[+] Creating $WEB_ROOT_DIR${NC}"
 mkdir -p "$PROJECT_FOLDER_NAME"
 cd "$PROJECT_FOLDER_NAME"
 
@@ -329,7 +350,6 @@ then
   echo  -e "${YELLOW}[+] Create wp_config${NC}"
 ls
   mv wp-config-sample.php wp-config.php
-
   sed -i "s/^.*DB_NAME.*$/define('DB_NAME', '$DB_NAME');/" wp-config.php
   sed -i "s/^.*DB_USER.*$/define('DB_USER', '$DB_USERNAME');/" wp-config.php
   sed -i "s/^.*DB_PASSWORD.*$/define('DB_PASSWORD', '$DB_PASSWORD');/" wp-config.php
@@ -337,22 +357,13 @@ ls
   echo ""
    echo -e "${YELLOW}[+] creating database${NC}"
   MYSQL=`which mysql`
-
   Q1="CREATE DATABASE IF NOT EXISTS $DB_NAME;"
   Q2="GRANT ALL ON *.* TO '$DB_USERNAME'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
   Q3="FLUSH PRIVILEGES;"
   SQL="${Q1}${Q2}${Q3}"
   $MYSQL -uroot -e "$SQL"
   echo  -e "${Green}Database $DB_NAME and user $DB_USERNAME created with your password.${NC}"
-
-
 fi
-
-# REMOVE DEFAULT PLUGINS AND INSTALL WORDPRESS_PLUGIN_URL
-# cd wp-content/plugins
-# echo "Removing default plugins"
-# rm hello.php
-# rm -rf akismet
 echo  -e "${GREEN}[+] All done press enter to continue${NC}"
 read
 
@@ -377,10 +388,10 @@ while true; do
     echo "[*] Enter 6 to update your system."
     echo "[*] Enter 7 to install wordpress ."
     echo "[*] Any other number to exit."
-    echo -n "[*] Enter Your choice: "
+    echo "[?] Enter Your choice: "
     read choice
 
-    echo -n "[+] you choose $choice  Please wait we are doing it for you..."
+    echo  "[+] you choose $choice  Please wait we are doing it for you..."
     echo ""
 
     case $choice in
@@ -414,7 +425,7 @@ while true; do
 
       *)
         echo ""
-        echo -n "Good Bye !"
+        echo  "Good Bye !"
         read 
         clear
         exit 1;
@@ -424,4 +435,3 @@ while true; do
 done
 }
 programStart
-
