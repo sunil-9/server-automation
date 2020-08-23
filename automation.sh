@@ -383,6 +383,7 @@ installssl(){
 
 renewSSL(){
   chmod a+x certbot-auto
+  cp certbot-auto /etc/letsencrypt/
   cd /etc/letsencrypt/ && ./certbot-auto renew && /etc/init.d/apache2 restart
   echo -e "${BLUE} [+] All done press enter to continue ${NC}"
 }
