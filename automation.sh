@@ -8,6 +8,7 @@ BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
+CYAN='\033[0;46m'
 NC='\033[0m' # No Color
 
 
@@ -371,6 +372,20 @@ echo  -e "${GREEN}[+] All done press enter to continue${NC}"
 read
 
 }
+installssl(){
+    echo -e "${CYAN}"
+    sudo add-apt-repository ppa:certbot/certbot
+    sudo apt install python-certbot-apache
+    sudo certbot --apache -d example.com
+    echo -e "${NC}"
+
+}
+
+renewSSL(){
+  chmod a+x certbot-auto
+  cd /etc/letsencrypt/ && ./certbot-auto renew && /etc/init.d/apache2 restart
+  echo -e "${BLUE} [+] All done press enter to continue ${NC}"
+}
 programStart(){
 while true; do 
     clear
@@ -387,9 +402,11 @@ while true; do
     echo "[*] Enter 2 to create swap Memory."
     echo "[*] Enter 3 to create virtual host."
     echo "[*] Enter 4 to Delete virtual host."
-    echo "[*] Enter 5 to guide to install phpmyadmin mannally."
+    echo "[*] Enter 5 to install phpmyadmin."
     echo "[*] Enter 6 to update your system."
     echo "[*] Enter 7 to install wordpress ."
+    echo "[*] Enter 7 to install SSL certificate(to make your website having https)."
+    echo "[*] Enter 7 to renew SSL certificate . (it should be renew every 3 month)"
     echo "[*] Any other number to exit."
     echo "[?] Enter Your choice: "
     read choice
@@ -425,6 +442,15 @@ while true; do
        7)
         fullAutomatedWP
         ;;
+
+       8)
+        installSSl
+        ;;
+
+       9)
+        renewSSL
+        ;;
+
 
       *)
         echo ""
