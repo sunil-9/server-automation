@@ -9,6 +9,11 @@ chmod +x automation.sh
  bash automation.sh
 ```
 
+#OR
+```
+git clone https://github.com/kismatboy/server-automation.git  && cd server-automation && chmod +x automation.sh && bash automation.sh
+```
+
 # Features
 * One click update and upgrade system
 * Installing basics servers tools like apache2 mysql and phpmyadmin automation
@@ -16,9 +21,11 @@ chmod +x automation.sh
 * Add and remove virtual host in a easiest way
 * Create phpmyadmin client on our domain securely
 * Installing Wordpress automation
-* auto ssl renew(comming soon)
-* mail server setup (comming soon)
+* 1 click SSL install
+* Website backup remote and local(BETA)
+* Mail server(comming soon)
+* VPN server setup (comming soon)
 
 
 
-If you are a Developer, then Highly recomended to contribute :-) 
+If you are a Developer, then feel free to contribute :-) 
