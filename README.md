@@ -9,7 +9,7 @@ chmod +x automation.sh
  bash automation.sh
 ```
 
-#OR
+# OR
 ```
 git clone https://github.com/kismatboy/server-automation.git  && cd server-automation && chmod +x automation.sh && bash automation.sh
 ```
