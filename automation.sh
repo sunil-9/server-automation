@@ -198,6 +198,7 @@ virtualHost(){
     echo -e "${YELLOW}[+]Reloading apache2 server configuration file${NC}" 
 
     service apache2 reload > /dev/null
+    sudo chown -R www-data:www-data /var/www/
 
     echo -e "${GREEN}[+] Done, please browse to http://$name to check! Click enter to go to main menu.${NC}"
     read
