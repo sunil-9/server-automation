@@ -386,6 +386,7 @@ installSSl(){
 
 }
 
+
 WPbackup(){
         echo "Please provide mysql info"
     MYSQL_HOST="localhost"
@@ -466,6 +467,7 @@ while true; do
     echo "[*] Enter 2 to create swap Memory."
     echo "[*] Enter 3 to create virtual host."
     echo "[*] Enter 4 to Delete virtual host."
+
     echo "[*] Enter 5 to install phpmyadmin in a domain."
     echo "[*] Enter 6 to update your system."
     echo "[*] Enter 7 to install wordpress ."
@@ -512,6 +514,7 @@ while true; do
         ;;
 
        9)
+
         WPbackup
         ;;
       *)
