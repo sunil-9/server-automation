@@ -454,13 +454,13 @@ WPbackup(){
 programStart(){
 while true; do 
     clear
-    echo -e "${GREEN}               #########################################${NC}"
-    echo -e "${GREEN}               ##                                     ##${NC}"
-    echo -e "${GREEN}               ##       Credits:Sunil Sapkota         ##${NC}"
-    echo -e "${GREEN}               ##   (Github: github.com/kismatboy)    ##${NC}"
-    echo -e "${GREEN}               ##  (Tested on amazon EC2 ubuntu VM)   ##${NC}"
-    echo -e "${GREEN}               ##                                     ##${NC}"
-    echo -e "${GREEN}               #########################################${NC}"
+    echo -e "${GREEN}               ##########################################${NC}"
+    echo -e "${GREEN}               ##${RED}                                     ${GREEN} ##${NC}"
+    echo -e "${GREEN}               ##${RED}       Credits:Sunil Sapkota         ${GREEN} ##${NC}"
+    echo -e "${GREEN}               ##${RED}   (Github: github.com/sunil-9)      ${GREEN} ##${NC}"
+    echo -e "${GREEN}               ##${RED}  (Tested on amazon EC2 ubuntu VM)   ${GREEN} ##${NC}"
+    echo -e "${GREEN}               ##${RED}                                     ${GREEN} ##${NC}"
+    echo -e "${GREEN}               ##########################################${NC}"
     echo;echo;echo;echo;
     echo "[*] Welcome to the server management console"
     echo "[*] Enter 1 to install apache2 server and mysql server with phpmyadmin."
